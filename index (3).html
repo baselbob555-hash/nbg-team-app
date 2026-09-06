@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NBG Team</title><link rel="icon" type="image/png" href="logo.png"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#6C0D2B">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#ffffff;--card:#fffaf3;--line:#e6d6bc;--text:#3a1420;--muted:#8a6d78;--accent:#6C0D2B;--accent-2:#8a1638;--sand:#E6D6BC;--green:#1f7a4d;--green-bg:#e3f3ea;--red:#b3283f;--red-bg:#fbe6e9;--yellow:#8a6400;--yellow-bg:#faf1d9}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+.app{max-width:520px;margin:auto;min-height:100vh;padding-bottom:92px}
+.top{padding:20px 16px 8px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:19px;color:var(--accent)}
+.brand img{width:44px;height:44px;object-fit:contain;border-radius:10px}
+.brand small{display:block;color:var(--muted);font-size:11px;font-weight:600;margin-top:2px}
+.headerBtn{border:1px solid var(--sand);background:#fffaf3;color:var(--accent);border-radius:999px;padding:9px 12px;font-weight:800;font-size:13px;white-space:nowrap}
+.badge-captain{display:inline-block;background:var(--accent);color:#fff;font-size:11px;font-weight:800;padding:3px 9px;border-radius:999px;margin-inline-start:6px;vertical-align:middle}
+main{padding:6px 16px}
+.hero{background:linear-gradient(145deg,var(--accent),var(--accent-2));border:1px solid var(--accent);border-radius:22px;padding:22px;margin-bottom:16px;color:#fff}
+.hero h1{margin:0 0 6px;font-size:24px;color:#fff}
+.hero p{margin:0;color:#ffffffd9}
+.section{font-size:17px;font-weight:800;margin:20px 2px 10px;color:var(--accent)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.muted{color:var(--muted);font-size:13px}
+.pill{padding:6px 10px;border-radius:999px;font-size:12px;font-weight:800;white-space:nowrap}
+.present{background:var(--green-bg);color:var(--green)}
+.absent{background:var(--red-bg);color:var(--red)}
+.late{background:var(--yellow-bg);color:var(--yellow)}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#ffffffee;border-top:1px solid var(--line);backdrop-filter:blur(12px);display:flex;justify-content:center}
+.navin{width:min(520px,100%);display:flex;padding:6px 8px;gap:6px}
+.nav button{flex:1;background:none;border:0;color:#9a7c87;padding:9px 4px;font-size:11px;border-radius:14px;font-weight:700}
+.nav button.active{color:#fff;background:var(--accent)}
+.nav b{display:block;font-size:18px;margin-bottom:2px}
+label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin:8px 0 2px}
+input,select,textarea{width:100%;background:#fff;border:1.5px solid var(--sand);border-radius:12px;color:var(--text);padding:12px;margin:4px 0 8px;font:inherit}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px}
+button.primary{width:100%;border:0;background:var(--accent);color:#fff;padding:13px;border-radius:12px;font-weight:800;font-size:15px}
+button.secondary{width:100%;border:1.5px solid var(--sand);background:#fff;color:var(--accent);padding:11px;border-radius:12px;font-weight:800}
+button.danger{border:1.5px solid var(--red);background:#fff;color:var(--red);padding:9px 12px;border-radius:10px;font-weight:800;font-size:12px}
+.empty{text-align:center;padding:30px;color:var(--muted)}
+.att{display:grid;grid-template-columns:1fr auto auto auto;gap:6px;align-items:center}
+.att button{border:1.5px solid var(--sand);background:#fff;color:var(--accent);border-radius:10px;padding:8px 6px;font-size:11px;font-weight:700}
+.att button.sel{border-color:var(--accent);color:#fff;background:var(--accent)}
+.hidden{display:none!important}
+.notice{padding:12px;border-radius:12px;background:var(--card);border:1px solid var(--line);margin-bottom:8px;font-size:14px}
+.toast{position:fixed;top:15px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;padding:10px 18px;border-radius:999px;z-index:50;font-size:13px;font-weight:700;box-shadow:0 6px 20px #0003}
+.modalbg{position:fixed;inset:0;background:#3a142099;z-index:40;display:flex;align-items:center;justify-content:center;padding:20px}
+.trow{padding:10px 0;border-bottom:1px solid var(--line)}
+.trow:last-child{border-bottom:0}
+.chip{display:inline-block;background:#fff;border:1px solid var(--sand);color:var(--accent);border-radius:999px;padding:5px 10px;font-size:11px;font-weight:700;margin-inline-end:6px}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+ <div class="brand"><img src="logo.png" alt="Nizip Birlikgücü 27 Spor">
+  <span>NBG TEAM<span id="captainBadge" class="badge-captain hidden">🔐 كابتن</span><small>Nizip Birlikgücü 27 Spor</small></span>
+ </div>
+ <button id="headerCaptainBtn" class="headerBtn" onclick="headerCaptainClick()">🔐 الكابتن</button>
+</header>
+<main id="view"><div class="empty">جارِ التحميل…</div></main>
+<nav class="nav hidden"><div class="navin">
+<button onclick="page('home')" id="n-home" class="active"><b>⌂</b>الرئيسية</button>
+<button onclick="page('schedule')" id="n-schedule"><b>▣</b>الجدول</button>
+<button onclick="page('attendance')" id="n-attendance"><b>✓</b>الحضور</button>
+<button onclick="page('captain')" id="n-captain"><b>♟</b>الكابتن</button>
+</div></nav>
+</div>
+<div id="toast" class="toast hidden"></div>
+<div id="captainModal" class="modalbg hidden">
+ <div class="card" style="width:min(420px,100%);background:#fff">
+  <div class="row"><b style="font-size:18px;color:var(--accent)">دخول الكابتن</b><button onclick="closeCaptain()" style="border:0;background:none;color:var(--accent);font-size:22px">×</button></div>
+  <p class="muted">أدخل رمز الكابتن للوصول إلى لوحة الإدارة.</p>
+  <input id="captainPinModal" type="password" inputmode="numeric" placeholder="رمز الكابتن">
+  <button class="primary" onclick="captainLoginModal()">دخول</button>
+ </div>
+</div>
+<script>
+const SUPABASE_URL="https://orqyunynelvvivtzzglj.supabase.co";
+const SUPABASE_KEY="sb_publishable_7kZkZt8hlpCcUGLOapzBAA_3tPNE5Y0";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+let session=null, me=null, viewMode=localStorage.getItem("nbg_view")||"player";
+let currentPage="home", players=[], trainings=[], attendance=[], notifications=[];
+let editingTrainingId=null, selectedAttTrainingId=null, channel=null;
+
+function toast(x){let t=document.getElementById("toast");t.textContent=x;t.classList.remove("hidden");setTimeout(()=>t.classList.add("hidden"),2400)}
+function esc(x){return String(x??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function fmtDate(d){return new Date(d+"T00:00:00").toLocaleDateString("ar",{weekday:"long",day:"numeric",month:"long"})}
+function fmtTime(t){return (t||"").slice(0,5)}
+function statusLabel(s){return s==="present"?"حاضر":s==="late"?"متأخر":"غائب"}
+
+async function boot(){
+ let {data:{session:s}}=await db.auth.getSession();
+ if(!s){
+  let {data,error}=await db.auth.signInAnonymously();
+  if(error){showAuthError(error);return}
+  s=data.session;
+ }
+ session=s;
+ await loadAll();
+ subscribeRealtime();
+}
+
+function showAuthError(err){
+ document.getElementById("view").innerHTML=`<div class="card"><b>تعذّر إنشاء جلسة دخول</b><p class="muted">${esc(err.message||"خطأ غير معروف")}</p><p class="muted">تأكد من تفعيل "Allow anonymous sign-ins" في إعدادات Supabase Auth للمشروع.</p></div>`;
+}
+
+async function loadAll(){
+ let [p,t,a,n]=await Promise.all([
+  db.from("players").select("*").order("name"),
+  db.from("trainings").select("*").order("training_date",{ascending:true}).order("start_time",{ascending:true}),
+  db.from("attendance").select("*"),
+  db.from("notifications").select("*").order("created_at",{ascending:false}).limit(15)
+ ]);
+ if(p.error) return toast(p.error.message);
+ players=p.data||[]; trainings=t.data||[]; attendance=a.data||[]; notifications=n.data||[];
+ me=players.find(x=>x.auth_user_id===session.user.id)||null;
+ updateHeader();
+ if(!me) return showLogin();
+ document.querySelector(".nav").classList.remove("hidden");
+ render();
+}
+
+function updateHeader(){
+ let badge=document.getElementById("captainBadge"), btn=document.getElementById("headerCaptainBtn");
+ if(me&&me.is_captain){
+  badge.classList.remove("hidden");
+  btn.textContent=viewMode==="captain"?"عرض اللاعب":"لوحة الكابتن";
+ }else{
+  badge.classList.add("hidden");
+  btn.textContent="🔐 الكابتن";
+ }
+}
+
+function headerCaptainClick(){
+ if(me&&me.is_captain){
+  viewMode=viewMode==="captain"?"player":"captain";
+  localStorage.setItem("nbg_view",viewMode);
+  updateHeader();
+  page(viewMode==="captain"?"captain":"home");
+  return;
+ }
+ openCaptain();
+}
+
+function showLogin(){
+ document.querySelector(".nav").classList.add("hidden");
+ document.getElementById("view").innerHTML=`
+<div class="hero"><h1>مرحبًا بفريق NBG 👋</h1><p>سجّل اسمك للدخول إلى تطبيق الفريق.</p></div>
+<div class="card"><label>اسم اللاعب</label><input id="name" placeholder="مثلاً: محمد أحمد"><button class="primary" onclick="join()">دخول</button></div>
+<div class="card"><div class="muted" style="margin-bottom:4px">أنت الكابتن؟ اكتب اسمك أعلاه ثم أدخل رمز الكابتن هنا:</div><input id="captainPin" type="password" inputmode="numeric" placeholder="رمز الكابتن"><button class="primary" onclick="captainLoginFromLogin()">دخول ككابتن</button></div>`;
+}
+
+async function ensureRegistered(){
+ if(me) return true;
+ let name=(document.getElementById("name")?.value||"").trim();
+ if(!name){toast("اكتب اسمك أولاً");return false}
+ let {data,error}=await db.from("players").insert({name,auth_user_id:session.user.id}).select().single();
+ if(error){toast(error.message);return false}
+ me=data; players.push(me);
+ return true;
+}
+
+async function join(){
+ if(!(await ensureRegistered())) return;
+ updateHeader();
+ document.querySelector(".nav").classList.remove("hidden");
+ page("home");
+}
+
+async function captainLoginFromLogin(){
+ let pin=document.getElementById("captainPin").value;
+ if(!pin) return toast("أدخل رمز الكابتن");
+ if(!(await ensureRegistered())) return;
+ await tryClaimCaptain(pin,()=>{
+  document.querySelector(".nav").classList.remove("hidden");
+  viewMode="captain"; localStorage.setItem("nbg_view","captain");
+  updateHeader(); page("captain");
+ });
+}
+
+function openCaptain(){
+ document.getElementById("captainModal").classList.remove("hidden");
+ setTimeout(()=>document.getElementById("captainPinModal").focus(),50);
+}
+function closeCaptain(){document.getElementById("captainModal").classList.add("hidden");document.getElementById("captainPinModal").value=""}
+
+async function captainLoginModal(){
+ if(!me){closeCaptain();return toast("سجّل اسمك أولاً من الشاشة الرئيسية")}
+ let pin=document.getElementById("captainPinModal").value;
+ await tryClaimCaptain(pin,()=>{
+  closeCaptain();
+  viewMode="captain"; localStorage.setItem("nbg_view","captain");
+  updateHeader(); page("captain");
+ });
+}
+
+async function tryClaimCaptain(pin,onSuccess){
+ let {data:ok,error}=await db.rpc("claim_captain",{p_pin:pin});
+ if(error) return toast(error.message);
+ if(!ok) return toast("رمز الكابتن غير صحيح");
+ me.is_captain=true;
+ toast("تم الدخول ككابتن");
+ onSuccess();
+}
+
+function render(){
+ if(currentPage==="home")home();
+ else if(currentPage==="schedule")schedule();
+ else if(currentPage==="attendance")att();
+ else if(currentPage==="captain")captain();
+}
+function page(p){
+ currentPage=p;
+ document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));
+ document.getElementById("n-"+p).classList.add("active");
+ render();
+}
+
+function upcomingTraining(){
+ let now=new Date();
+ return trainings.filter(t=>new Date(t.training_date+"T"+t.start_time)>=now)[0]||null;
+}
+function statusFor(tid,pid){return attendance.find(a=>a.training_id===tid&&a.player_id===pid)?.status||"absent"}
+
+function home(){
+ let upcoming=upcomingTraining();
+ let myStatus=upcoming?statusFor(upcoming.id,me.id):null;
+ let statusIcon={present:"🟢 حاضر",absent:"🔴 غائب",late:"🟡 متأخر"};
+ document.getElementById("view").innerHTML=`
+<div class="hero"><h1>أهلاً ${esc(me.name)} 👋</h1><p>كل ما يخص تدريبات الفريق في مكان واحد.</p></div>
+<div class="section">التدريب القادم</div>${upcoming?trainingCard(upcoming):'<div class="card empty">لا يوجد تدريب قادم حالياً.</div>'}
+${upcoming?`<div class="card row"><span class="muted">حالة حضوري</span><span class="pill ${myStatus}">${statusIcon[myStatus]}</span></div>`:""}
+<div class="section">آخر الإشعارات</div>${notifications.length?notifications.slice(0,4).map(n=>`<div class="notice">🔔 <b>${esc(n.title)}</b><div class="muted">${esc(n.body||"")}</div></div>`).join(""):'<div class="card empty">لا توجد إشعارات بعد.</div>'}`;
+}
+
+function trainingCard(t){
+ let past=new Date(t.training_date+"T"+t.start_time)<new Date();
+ return `<div class="card"><div class="row"><div><b>⚽ تدريب الفريق</b><div class="muted">${fmtDate(t.training_date)} • ${fmtTime(t.start_time)}</div></div><span class="pill ${past?'late':'present'}">${past?'انتهى':'مؤكد'}</span></div>${t.location?`<div class="muted" style="margin-top:8px">📍 ${esc(t.location)}</div>`:""}${t.note?`<div class="muted">📝 ${esc(t.note)}</div>`:""}</div>`;
+}
+
+function schedule(){
+ document.getElementById("view").innerHTML='<div class="section">الجدول الأسبوعي</div>'+(trainings.length?trainings.map(trainingCard).join(""):'<div class="card empty">لا يوجد تدريبات مجدولة.</div>');
+}
+
+function att(){
+ if(viewMode==="captain"&&me.is_captain){captainAttendance();return}
+ document.getElementById("view").innerHTML='<div class="section">حضوري</div>'+(trainings.length?trainings.map(t=>{let s=statusFor(t.id,me.id);return `<div class="card"><div class="row"><div><b>${fmtDate(t.training_date)}</b><div class="muted">${fmtTime(t.start_time)}</div></div><span class="pill ${s}">${statusLabel(s)}</span></div></div>`}).join(""):'<div class="card empty">لا يوجد تدريبات بعد.</div>');
+}
+
+function captainAttendance(){
+ if(!trainings.length){document.getElementById("view").innerHTML='<div class="card empty">أضف تدريباً أولاً من لوحة الكابتن.</div>';return}
+ if(!selectedAttTrainingId||!trainings.find(t=>t.id===selectedAttTrainingId)) selectedAttTrainingId=(upcomingTraining()||trainings[trainings.length-1]).id;
+ let t=trainings.find(x=>x.id===selectedAttTrainingId);
+ document.getElementById("view").innerHTML=`
+<div class="section">الحضور</div>
+<div class="card"><label>اختر التدريب</label><select id="attSel" onchange="selectedAttTrainingId=this.value;captainAttendance()">${trainings.map(x=>`<option value="${x.id}" ${x.id===t.id?"selected":""}>${fmtDate(x.training_date)} — ${fmtTime(x.start_time)}</option>`).join("")}</select></div>
+<div class="card">${players.map(p=>`<div class="att trow"><b>${esc(p.name)}</b>${["present","absent","late"].map(s=>`<button class="${statusFor(t.id,p.id)===s?"sel":""}" onclick="setStatus('${t.id}','${p.id}','${s}')">${statusLabel(s)}</button>`).join("")}</div>`).join("")}</div>`;
+}
+
+async function setStatus(tid,pid,status){
+ let {error}=await db.from("attendance").upsert({training_id:tid,player_id:pid,status,updated_at:new Date().toISOString()},{onConflict:"training_id,player_id"});
+ if(error) return toast(error.message);
+ toast("تم تحديث الحضور");
+ await loadAll();
+}
+
+function captain(){
+ if(!(me&&me.is_captain)){
+  document.getElementById("view").innerHTML='<div class="card empty">هذه الصفحة للكابتن فقط.<br><br><button class="primary" style="width:auto;padding:10px 18px" onclick="openCaptain()">🔐 دخول ككابتن</button></div>';
+  return;
+ }
+ let upcoming=upcomingTraining();
+ document.getElementById("view").innerHTML=`
+<div class="section">التدريب القادم</div>${upcoming?trainingCard(upcoming):'<div class="card empty">لا يوجد تدريب قادم.</div>'}
+<div class="section">${editingTrainingId?"تعديل التدريب":"إضافة تدريب"}</div>
+<div class="card">
+ <label>التاريخ</label><input id="td" type="date">
+ <label>الوقت</label><input id="tt" type="time">
+ <label>المكان</label><input id="tl" placeholder="اسم الملعب">
+ <label>ملاحظة</label><textarea id="tn" placeholder="مثلاً: الحضور قبل التدريب بـ15 دقيقة"></textarea>
+ <button class="primary" onclick="saveTraining()">${editingTrainingId?"تحديث التدريب":"إضافة وإرسال إشعار"}</button>
+ ${editingTrainingId?`<button class="secondary" style="margin-top:8px" onclick="cancelEditTraining()">إلغاء التعديل</button>`:""}
+</div>
+<div class="section">كل التدريبات (${trainings.length})</div>
+<div class="card">${trainings.length?trainings.map(t=>`<div class="trow row"><div><b>${fmtDate(t.training_date)}</b><div class="muted">${fmtTime(t.start_time)}${t.location?" • "+esc(t.location):""}</div></div><div class="row" style="gap:6px"><button class="danger" onclick="editTraining('${t.id}')" style="border-color:var(--sand);color:var(--accent)">تعديل</button><button class="danger" onclick="deleteTraining('${t.id}')">حذف</button></div></div>`).join(""):'<div class="empty">لا توجد تدريبات.</div>'}</div>
+<div class="card"><button onclick="logoutCaptainView()" class="secondary">تسجيل خروج من وضع الكابتن</button></div>
+<div class="section">اللاعبون (${players.length})</div>
+<div class="card">${players.map(p=>`<div class="trow row"><span>${esc(p.name)}</span>${p.is_captain?'<span class="chip">كابتن</span>':'<span class="muted">لاعب</span>'}</div>`).join("")}</div>`;
+ if(editingTrainingId){
+  let t=trainings.find(x=>x.id===editingTrainingId);
+  if(t){document.getElementById("td").value=t.training_date;document.getElementById("tt").value=t.start_time.slice(0,5);document.getElementById("tl").value=t.location||"";document.getElementById("tn").value=t.note||""}
+ }
+}
+
+function editTraining(id){editingTrainingId=id;captain()}
+function cancelEditTraining(){editingTrainingId=null;captain()}
+
+async function saveTraining(){
+ let d=document.getElementById("td").value, time=document.getElementById("tt").value;
+ let location=document.getElementById("tl").value, note=document.getElementById("tn").value;
+ if(!d||!time) return toast("حدد التاريخ والوقت");
+ if(editingTrainingId){
+  let {error}=await db.from("trainings").update({training_date:d,start_time:time,location,note}).eq("id",editingTrainingId);
+  if(error) return toast(error.message);
+  toast("تم تحديث التدريب");
+  editingTrainingId=null;
+ }else{
+  let {data,error}=await db.from("trainings").insert({training_date:d,start_time:time,location,note}).select().single();
+  if(error) return toast(error.message);
+  await db.from("notifications").insert({training_id:data.id,title:"تدريب جديد",body:`تدريب ${fmtDate(d)} الساعة ${time}`});
+  toast("تمت إضافة التدريب");
+ }
+ await loadAll();
+}
+
+async function deleteTraining(id){
+ if(!confirm("هل تريد حذف هذا التدريب؟")) return;
+ let {error}=await db.from("trainings").delete().eq("id",id);
+ if(error) return toast(error.message);
+ if(editingTrainingId===id) editingTrainingId=null;
+ toast("تم حذف التدريب");
+ await loadAll();
+}
+
+function logoutCaptainView(){
+ viewMode="player"; localStorage.setItem("nbg_view","player");
+ updateHeader();
+ toast("تم التبديل إلى وضع اللاعب");
+ page("home");
+}
+
+function subscribeRealtime(){
+ if(channel) db.removeChannel(channel);
+ channel=db.channel("team-live")
+  .on("postgres_changes",{event:"*",schema:"public",table:"trainings"},()=>loadAll())
+  .on("postgres_changes",{event:"*",schema:"public",table:"attendance"},()=>loadAll())
+  .on("postgres_changes",{event:"*",schema:"public",table:"notifications"},()=>loadAll())
+  .on("postgres_changes",{event:"*",schema:"public",table:"players"},()=>loadAll())
+  .subscribe();
+}
+
+boot();
+if("serviceWorker" in navigator) window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+</script>
+</body></html>
