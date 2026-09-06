@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Unzip project
-        run: unzip -o NBG-Team-App-v6-fixed.zip -d .
+        run: unzip -o NBG-Team-App-v8-fixed.zip -d .
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -34,28 +34,23 @@ jobs:
 
   deploy-pages:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - name: Unzip project
-        run: unzip -o NBG-Team-App-v6-fixed.zip -d extracted
+        run: unzip -o NBG-Team-App-v8-fixed.zip -d extracted
       - name: Prepare site folder
         run: |
           mkdir -p site
-          cp extracted/index.html site/ || true
-          cp extracted/sw.js site/ || true
-          cp extracted/manifest.webmanifest site/ || true
-          cp extracted/logo.png site/ || true
-          cp extracted/icon-*.png site/ || true
+          cp extracted/index.html site/
+          cp extracted/sw.js site/
+          cp extracted/manifest.webmanifest site/
+          cp extracted/logo.png site/
+          cp extracted/icon-*.png site/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site
       - id: deployment
         uses: actions/deploy-pages@v4
-        
