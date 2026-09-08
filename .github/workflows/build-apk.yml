@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Unzip project
-        run: unzip -o NBG-Team-App-v9-fixed.zip -d .
+        run: unzip -o NBG-Team-App-v10-fixed.zip -d .
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -40,7 +40,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Unzip project
-        run: unzip -o NBG-Team-App-v9-fixed.zip -d extracted
+        run: unzip -o NBG-Team-App-v10-fixed.zip -d extracted
       - name: Prepare site folder
         run: |
           mkdir -p site
